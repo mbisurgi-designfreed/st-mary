@@ -20,6 +20,8 @@
 
         #problema {
             margin-top: 10px;
+            display: flex;
+            flex-direction: column;
         }
 
         #counter {
@@ -29,9 +31,11 @@
         }
 
         img {
-            width: 100%;
+            width: 300px;
             height: 300px;
             visibility: hidden;
+            align-self: center;
+            margin-bottom: 10px;
         }
 
         #respuesta {
@@ -51,7 +55,7 @@
         
         <div id="problema">
             <p id="counter">0</p>
-            <img id="image" src="https://images.freeimages.com/images/large-previews/e4a/surf-3-1378236.jpg" />
+            <img id="image" src="./test.png" />
             <input placeholder="Respuesta" name="respuesta" id="respuesta" type="number" />
             <p id="resultado"></p>
         </div>
@@ -61,11 +65,14 @@
         var seconds = 0;
         var start = false;
         var interval = null;
+        var nombre;
+        var edad;
+        var email;
 
         document.getElementById('comenzar').addEventListener('click', function() {
-            var nombre = document.getElementById('nombre').value;
-            var edad = document.getElementById('edad').value;
-            var email = document.getElementById('email').value;
+            nombre = document.getElementById('nombre').value;
+            edad = document.getElementById('edad').value;
+            email = document.getElementById('email').value;
 
             if ((!nombre || nombre.length === '') || (!edad || edad === 0) || (!email || email.length === '0')) {
                 alert('Por favor complete todos los valores...');
@@ -92,56 +99,30 @@
                 document.getElementById('counter').innerText = seconds;
                 document.getElementById('resultado').innerText = 'Respuesta correcta...';
 
-                fetch('https://api.sendgrid.com/v3/mail/send', {
-                    method: 'POST', 
-                    // mode: 'no-cors', 
+                fetch('https://st-mary-server.herokuapp.com/email', {
+                    method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer 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',
                         'Content-Type': 'application/json'
-                    }, 
-                    body: {
-                    "personalizations": [
-                        {
-                        "to": [
-                            {
-                            "email": "mbisurgi@bc-group.com.ar"
-                            }
-                        ],
-                        "subject": "Hello, World!"
-                        }
-                    ],
-                    "from": {
-                        "email": "mbisurgi@bc-group.com.ar"
                     },
-                    "content": [
-                        {
-                        "type": "text/plain",
-                        "value": "Hello, World!"
-                        }
-                    ]
-
-                    // api_user: 'mbisurgi',
-                    // api_key: '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',
-                    // to: 'mbisurgi@bc-group.com.ar',
-                    // toname: 'Santiago Viola',
-                    // subject: 'Encuesta test',
-                    // from: 'maximiliano.bisurgi@gmail.com',
-                    // text: nombre + ' de ' + edad + 'años de edad tardo '  + seconds + ' en resolver el problema.'
-                }})
+                    body: JSON.stringify({
+                        edad: edad,
+                        email: email,
+                        nombre: nombre,
+                        seconds: seconds,
+                    })
+                })
                 .then(function(res) {
                     res.json().then(function(json) {
-                        console.log('json', json);
+                        document.getElementById('resultado').innerText = 'Su encuesta fue enviada correctamente...';
                     });
                 })
                 .catch(function(err) {
-                    console.log('err', err);
+                    document.getElementById('resultado').innerText = 'Ha ocurrido un error enviando su encuesta...';
                 })
             } else {
                 document.getElementById('resultado').innerText = 'Respuesta incorrecta...';
             }
         });
-
-        // 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
     </script>
 </body>
 </html>
