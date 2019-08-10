@@ -112,9 +112,15 @@
                     })
                 })
                 .then(function(res) {
-                    res.json().then(function(json) {
-                        document.getElementById('resultado').innerText = 'Su encuesta fue enviada correctamente...';
-                    });
+                    if (res.status === 200) {
+                        res.json().then(function(json) {
+                            document.getElementById('resultado').innerText = 'Su encuesta fue enviada correctamente...';
+                        });
+                    }
+
+                    if (res.status === 500) {
+                        document.getElementById('resultado').innerText = 'Ha ocurrido un error enviando su encuesta...';
+                    }
                 })
                 .catch(function(err) {
                     document.getElementById('resultado').innerText = 'Ha ocurrido un error enviando su encuesta...';
